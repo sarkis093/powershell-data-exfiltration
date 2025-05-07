@@ -46,9 +46,40 @@ The scripts aim to simulate **data exfiltration channels** for:
 
 ### Version with Webhook.site (HTTP)
 
-1. Go to [webhook.site](https://webhook.site) and copy your unique endpoint.
-2. Edit the `exfiltrate-to-webhook.ps1` script and replace the endpoint in the request header.
-3. Run the script in PowerShell:
-   ```powershell
-   .\exfiltrate-to-webhook.ps1
+1. **Access Webhook.site:**
+   - Go to [https://webhook.site](https://webhook.site).
+   - Once the page loads, you will see a unique URL generated for you automatically. The URL will look like this: `https://webhook.site/<unique-id>`. This is the URL of your **custom endpoint**, where the exfiltrated data will be sent.
+
+2. **Copy the Webhook URL:**
+   - In the main panel on the Webhook.site homepage, you'll see your unique URL. Simply copy this URL (usually displayed in a field titled “Your unique URL”).
+
+3. **Replace the endpoint in the PowerShell script:**
+   - Open the `exfiltrate-to-webhook.ps1` file in your text editor or PowerShell.
+   - Inside the script, locate the following variables:
+     ```powershell
+     $webhookUrl = 'webhook.site'
+     $port = 80  # Default HTTP port
+
+     $endpoint = 'unique URL'
+     ```
+   - Replace the value of `$endpoint` with the unique URL you copied in step 2, so it looks like this:
+     ```powershell
+     $endpoint = '<unique-id>'
+     ```
+     The `<unique-id>` is the part at the end of the URL provided by Webhook.site (e.g., if your URL is `https://webhook.site/abc123`, you should replace `unique URL` with `abc123`).
+
+4. **Run the PowerShell script:**
+   - Now that the script is configured with your custom URL, run the script in a PowerShell terminal. Use the following command:
+     ```powershell
+     .\exfiltrate-to-webhook.ps1
+     ```
+   - The script will make an HTTP `POST` request to Webhook.site, sending the simulated exfiltrated data.
+
+5. **Check the reception in Webhook.site:**
+   - After running the script, go back to the Webhook.site page.
+   - In the site's interface, you'll see the HTTP requests that were sent to your endpoint, with details about the exfiltrated data. Webhook.site will also show the request headers and the content sent (just like a real exfiltration payload).
+
+**Important Tips:**
+- Webhook.site can be used to observe how the network responds to unencrypted HTTP traffic (no TLS), which is useful for security testing purposes.
+- There’s no need to set up extra servers or infrastructure to start testing, as Webhook.site provides everything automatically.
 

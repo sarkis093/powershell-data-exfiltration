@@ -9,7 +9,7 @@ $port = 80  # Default HTTP port
 # Define the data to be sent
 $data = '{"username": "administrator", "password": "admin@123"}'
 
-$endpoint = ''
+$endpoint = 'unique URL'
 
 # Create the raw HTTP request
 $headers = @"

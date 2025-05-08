@@ -83,3 +83,80 @@ The scripts aim to simulate **data exfiltration channels** for:
 - Webhook.site can be used to observe how the network responds to unencrypted HTTP traffic (no TLS), which is useful for security testing purposes.
 - There’s no need to set up extra servers or infrastructure to start testing, as Webhook.site provides everything automatically.
 
+---
+
+### Version with Python Listener (TCP)
+
+1. **Prepare the Python Listener (`exfil_listener.py`)**
+
+   First, you need to run the Python listener script that will receive the data sent by the PowerShell script.
+
+   #### Steps to Run the Python Listener:
+   
+   1. **Download or copy the `exfil_listener.py` script** to your machine.
+   
+   2. **Open a terminal or command prompt**.
+   
+   3. **Navigate to the directory where `exfil_listener.py` is located**. For example:
+
+      ```bash
+      cd C:\path\to\your\project
+      ```
+   
+   4. **Run the Python listener script**:
+
+      ```bash
+      python exfil_listener.py
+      ```
+
+      The Python script will start listening for incoming connections on port 443, as specified in the script. You should see something like this in the terminal:
+
+      ```
+      Server listening on port 443...
+      ```
+
+      The script will remain active, waiting for a connection from the PowerShell script.
+
+2. **Configure the PowerShell Script (`exfiltrate-to-python.ps1`)**
+
+   Now, we need to configure the PowerShell script that will send the exfiltrated data to the Python server.
+
+   #### Steps to Configure and Run the PowerShell Script:
+   
+   1. **Download or copy the `exfiltrate-to-python.ps1` script** to your machine.
+   
+   2. **Open the script in a text editor** (e.g., Notepad or Visual Studio Code).
+   
+   3. **Modify the `$attacker_ip` and `$port` variables in the PowerShell script**. For example:
+   
+      ```powershell
+      $attacker_ip = '127.0.0.1'  # Server address (use the correct server IP)
+      $port = 443  # The same port the server is listening on
+      ```
+   
+      If both the Python listener and PowerShell script are on the same machine, `127.0.0.1` (localhost) will work. If the server is on another machine, use the IP address of that machine.
+   
+   4. **Run the PowerShell script** in PowerShell by executing the following command:
+
+      ```powershell
+      .\exfiltrate-to-python.ps1
+      ```
+
+      The script will collect system information and attempt to connect to the Python server at the specified IP address and port.
+
+3. **Verify Communication and Exfiltrated Data**
+
+   - **In the Python Terminal**: After running the PowerShell script, the Python server (`exfil_listener.py`) should display something like this:
+
+     ```
+     Connection received from ('127.0.0.1', <port>).
+     Data received: {"Hostname": "MyComputer", "Username": "user", "OS": "Windows 10", "IPAddress": "192.168.1.5"}
+     ```
+     
+   - **In the PowerShell Terminal**: The PowerShell script will finish execution after sending the data. The Python server may respond, and the PowerShell script can optionally handle this.
+
+   - **Ensure the Connection Closes**: After the data is sent, both scripts will close the connection automatically.
+
+**Important Tips:**
+- Ensure both scripts are running and listening on the same port (443 in this case).
+- You can change the port if needed, but both the PowerShell and Python scripts need to use the same one.
